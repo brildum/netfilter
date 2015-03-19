@@ -16,6 +16,8 @@ def main():
                         help='regular expression to identify IPs')
     parser.add_argument('--group', '-g', required=True, type=int,
                         help='regular expression group to identify IP')
+    parser.add_argument('--input', '-i', type=argparse.FileType('r'),
+                        help='input file to read (defaults to stdin)')
     parser.add_argument('--exclude', '-x', action='store_true',
                         help='exclude lines which match netblocks filter')
     args = parser.parse_args()
@@ -29,7 +31,10 @@ def main():
             if matched:
                 sys.stdout.write(line)
 
-    for line in sys.stdin:
+    f = sys.stdin
+    if args.input:
+        f = args.input
+    for line in f:
         matched = False
         ip_match = args.regex.match(line)
         if ip_match:
